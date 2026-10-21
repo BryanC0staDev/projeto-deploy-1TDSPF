@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { TipoProduto } from "../../types/types";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function EditarProdutos() {
   // Para alterar o título da página:
   document.title = "Editar Produtos";
@@ -10,25 +12,31 @@ export default function EditarProdutos() {
 
   const { id } = useParams<{ id: string }>();
 
-  const [produto, setProduto] = useState<TipoProduto>({ id: "", nome: "", preco: 0, estoque: "", avatar: "" });
+  const [produto, setProduto] = useState<TipoProduto>({ id: "", nome: "", preco: 0, estoque: 0, avatar: "" });
 
   useEffect(() => {
 
     const carregaProduto = async () => {
 
       try {
-        // const response = await fetch("http://localhost:3001/produtos/"+id);
-        const response = await fetch(`http://localhost:3001/produtos/${id}`);
+
+        //CONCATENAÇÃO EXCLUSIVA DA PLANILHA DO GOOGLE
+        const response = await fetch(`${API_URL}?id=${id}`);
 
         //TRATAMENTO DE ERRO
         if (!response.ok) {
           throw new Error(
-            `Erro na listagem dos produtos: ${response.status} - ${response.statusText}`,
+            `Erro na listagem do produto: ${response.status} - ${response.statusText}`,
           );
         }
 
-        //SUCESSO
-        const data: TipoProduto = await response.json();
+        
+        const {data,status} = await response.json();
+        
+        if(status === "error"){
+          throw new Error(`Erro! Produto não encontrado na Planilha! ${status}`);
+        }
+
         setProduto(data);
 
       } catch (error) {
@@ -43,12 +51,12 @@ export default function EditarProdutos() {
   const handleUpdate = async () => {
     try {
 
-      const response = await fetch(`http://localhost:3001/produtos/${produto.id}`, {
-        method: "PUT",
+      const response = await fetch(API_URL, {
+        method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "text/plain;charset=utf-8"
         },
-        body: JSON.stringify(produto)
+        body: JSON.stringify({action:"PUT",...produto})
       });
 
       //ERRO
@@ -57,6 +65,12 @@ export default function EditarProdutos() {
           `Erro na atualização do produto: ${response.status} - ${response.statusText}`,
         );
       }
+      
+        const {status} = await response.json();
+        
+        if(status === "error"){
+          throw new Error(`Erro na atualização do produto ${status}`);
+        }
 
       //SUCESSO
       alert("Produto atualizado com sucesso!");
@@ -85,8 +99,12 @@ export default function EditarProdutos() {
               <input type="number" step={0.1} name="preco" id="preco" value={produto.preco} onChange={(e) => setProduto({ ...produto, preco: parseFloat(e.target.value) })} />
             </div>
             <div>
-              <label htmlFor="descricao">Descrição do produto </label>
-              <input type="text" name="descricao" id="descricao" value={produto.estoque} onChange={(e) => setProduto({ ...produto, estoque: e.target.value })} />
+              <label htmlFor="estoque">Estoque do produto </label>
+              <input type="number" step={1} name="estoque" id="estoque" value={produto.estoque} onChange={(e) => setProduto({ ...produto, estoque: parseFloat(e.target.value) })} />
+            </div>
+            <div>
+              <label htmlFor="avatar">Descrição do produto </label>
+              <input type="text" name="avatar" id="avatar" value={produto.avatar} onChange={(e) => setProduto({ ...produto, avatar: e.target.value })} />
             </div>
             <div>
               <label htmlFor="avatar">Avatar do produto </label>
