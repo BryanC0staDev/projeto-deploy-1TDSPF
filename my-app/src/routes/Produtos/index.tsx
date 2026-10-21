@@ -47,11 +47,24 @@ export default function Produtos() {
 
   const handleDelete = async (id: string) => {
     try {
+        
+  
+      const acao = {
+        action:"DELETE",
+        id:id
+      }
 
-      const response = await fetch(`http://localhost:3001/produtos/${id}`, {
-        method: "DELETE"
-      });
+      const contentHeader = {
+          "Content-Type":"text/plain;charset=utf-8"
+        }
 
+      const requObj = {
+        method:"POST",
+        headers:contentHeader,
+        body: JSON.stringify(acao)
+      }
+
+      const response = await fetch(API_URL, requObj);
       //ERRO
       if (!response.ok) {
         throw new Error(
@@ -62,7 +75,7 @@ export default function Produtos() {
       //SUCESSO
       alert("Produto exculído com sucesso!");
       //REDIRECT
-      navigate("/");
+      setProdutos((prevProdutos)=>prevProdutos.filter((p)=>p.id !== id))
 
     } catch (error) {
       console.error(error);
