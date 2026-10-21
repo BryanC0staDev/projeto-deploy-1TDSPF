@@ -5,8 +5,8 @@ import CardProduto from "../../components/CardProduto";
 import { FaEdit as Editar } from "react-icons/fa";
 import { MdDeleteForever as Excluir } from "react-icons/md";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyv9lzP5PLFeWPE-Y9GwSJQfGQHcs8UbZZHB_s9AlWKUWvRLGqsGDQMrmW8fXtQxTsx3Q/exec"
 
+const API_URL = import.meta.env.VITE_API_URL
 
 export default function Produtos() {
   // Para alterar o título da página:
