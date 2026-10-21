@@ -10,7 +10,7 @@ export default function EditarProdutos() {
 
   const { id } = useParams<{ id: string }>();
 
-  const [produto, setProduto] = useState<TipoProduto>({ id: "", nome: "", preco: 0, descricao: "", avatar: "" });
+  const [produto, setProduto] = useState<TipoProduto>({ id: "", nome: "", preco: 0, estoque: "", avatar: "" });
 
   useEffect(() => {
 
@@ -86,7 +86,7 @@ export default function EditarProdutos() {
             </div>
             <div>
               <label htmlFor="descricao">Descrição do produto </label>
-              <input type="text" name="descricao" id="descricao" value={produto.descricao} onChange={(e) => setProduto({ ...produto, descricao: e.target.value })} />
+              <input type="text" name="descricao" id="descricao" value={produto.estoque} onChange={(e) => setProduto({ ...produto, estoque: e.target.value })} />
             </div>
             <div>
               <label htmlFor="avatar">Avatar do produto </label>
